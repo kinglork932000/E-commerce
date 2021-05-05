@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <title>VN2018Tokyo | Cart</title>
+    
+    <!-- Font awesome -->
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.css" rel="stylesheet">   
+    <!-- SmartMenus jQuery Bootstrap Addon CSS -->
+    <link href="/css/jquery.smartmenus.bootstrap.css" rel="stylesheet">
+    <!-- Product view slider -->
+    <link rel="stylesheet" type="text/css" href="/css/jquery.simpleLens.css">    
+    <!-- slick slider -->
+    <link rel="stylesheet" type="text/css" href="/css/slick.css">
+    <!-- price picker slider -->
+    <link rel="stylesheet" type="text/css" href="/css/nouislider.css">
+    <!-- Theme color -->
+    <link id="switcher" href="/css/theme-color/default-theme.css" rel="stylesheet">
+    <!-- <link id="switcher" href="/css/theme-color/bridge-theme.css" rel="stylesheet"> -->
+    <!-- Top Slider CSS -->
+    <link href="/css/sequence-theme.modern-slide-in.css" rel="stylesheet" media="all">
+
+    <!-- Main style sheet -->
+    <link href="/css/style.css" rel="stylesheet">    
+
+    <!-- Google Font -->
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  </head>
+  <body> 
+   <!-- wpf loader Two -->
+    <div id="wpf-loader-two">          
+      <div class="wpf-loader-two-inner">
+        <span>Loading</span>
+      </div>
+    </div> 
+    <!-- / wpf loader Two -->       
+  <!-- SCROLL TOP BUTTON -->
+    <a class="scrollToTop" href="#"><i class="fa fa-chevron-up"></i></a>
+  <!-- END SCROLL TOP BUTTON -->
+  	<div sec:authorize="hasAuthority('ROLE_ADMIN')">
+    	<div lang="en" th:insert="_adminheader::adminheader"></div>
+	</div>
+	<div sec:authorize="hasAuthority('ROLE_USER')">
+    	<div lang="en" th:insert="_header::header"></div>
+	</div>
+	<div sec:authorize="isAnonymous()">
+    	<div lang="en" th:insert="_header::header"></div>
+	</div>
+  <!-- catg header banner section -->
+  <section id="aa-catg-head-banner">
+   <img src="/img/cart.png" alt="fashion img">
+   <div class="aa-catg-head-banner-area">
+     <div class="container">
+      <div class="aa-catg-head-banner-content">
+        <h2>Cart Page</h2>
+        <ol class="breadcrumb">
+          <li><a href="/index">Home</a></li>                   
+          <li class="active">Cart</li>
+        </ol>
+      </div>
+     </div>
+   </div>
+  </section>
+  <!-- / catg header banner section -->
+
+ <!-- Cart view section -->
+ <section id="cart-view">
+   <div class="container">
+     <div class="row">
+       <div class="col-md-12">
+         <div class="cart-view-area">
+           <div class="cart-view-table">
+           
+           	 <div th:if="${notEnoughStock}" class="alert alert-warning">
+                          	Oops, some of the products don't have enough stock.
+                          </div>
+                          <div th:if="${emptyCart}" class="alert alert-warning">
+                          	Oops, your cart is empty. See if you can find what you like and add them to cart.
+             </div>
+           
+           	 <div class="row">
+       					<div class="col-xs-8"><h4 style="margin-left:70px;">Product</h4></div>
+       					<div class="col-xs-2"><h4>Price</h4></div>
+       					<div class="col-xs-2"><h4>Quantity</h4></div>
+       		</div>
+       		<div class="row" th:each="cartItem : ${cartItemList}">
+       				<form th:action="@{/shoppingCart/updateCartItem}" method="post">
+       					<hr/>
+       					<div class="col-xs-2">
+       						<a th:href="@{/productdetail/id={id}(id=${cartItem.product.product_id})}">
+       							<img width="125px" height="150px" th:src="@{'/upload/' + ${cartItem.product.product_id}} + '.jpg'" onerror="this.src='/img/man/t-shirt-1.png';">
+       						</a>
+       					</div>
+       					<div class="col-xs-6">
+       						<div style="margin-left:50px;">
+       						<h4 th:text="${cartItem.product.product_name}"><a href="#"></a></h4>
+       						<p th:if="${cartItem.product.quantity&gt;10}" style="color:#2eb82e;">In Stock</p>
+       						<p th:if="${cartItem.product.quantity&lt;10 and cartItem.product.quantity&gt;0}" style="color:#2eb82e;">Only <span th:text="${cartItem.product.quantity}"></span> In Stock</p>
+       						<p th:if="${cartItem.product.quantity==0}" style="color:#ff6666;">Soul out!</p>
+       						<a th:href="@{/shoppingCart/delete(id=${cartItem.cartitem_id})}"><span style="color: #db3208;" class="fa fa-trash fa-2x"></span></a>
+       						</div>
+       					</div>
+       					
+       					<div class="col-xs-2">
+       						<h5 style="color:#db3208; font-size:large;">$<span th:text="${cartItem.product.price}" th:style="${cartItem.product.quantity}==0? 'text-decoration: line-through' : ''"></span></h5>
+       					</div>
+       					
+       					<div class="col-xs-2">
+       						<input hidden="hidden" id="cartitem_id" name="cartitem_id" th:value="${cartItem.cartitem_id}"/>
+       						<input type="number" min="0" id="quantity" name="quantity" th:disabled="${cartItem.product.quantity==0}"
+       						class="form-control" th:value="${cartItem.quantity}">
+       						<button th:disabled="${cartItem.product.quantity==0}" type="submit" class="btn btn-warning btn-xs">Update</button>
+       					</div>
+       					
+       				</form>
+       		</div>
+  
+             <!-- Cart Total view -->
+             <div class="cart-view-total">
+               <h4>Cart Totals</h4>
+               <table class="aa-totals-table">
+                 <tbody>
+                   <tr>
+                     <th>Total</th>
+                     <td>$<span th:text="${user.GrandTotal}"></span></td>
+                   </tr>
+                 </tbody>
+               </table>
+               <a th:unless="${emptyCart}" th:href="@{/checkout}" class="aa-cart-view-btn">Proced to Checkout</a>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </section>
+ <!-- / Cart view section -->
+
+
+  <div lang="en" th:insert="_footer::footer"></div>
+	<div lang="en" th:insert="_modal::modal"></div>
+
+
+    
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.js"></script>  
+    <!-- SmartMenus jQuery plugin -->
+    <script type="text/javascript" src="/js/jquery.smartmenus.js"></script>
+    <!-- SmartMenus jQuery Bootstrap Addon -->
+    <script type="text/javascript" src="/js/jquery.smartmenus.bootstrap.js"></script>  
+    <!-- To Slider JS -->
+    <script src="/js/sequence.js"></script>
+    <script src="/js/sequence-theme.modern-slide-in.js"></script>  
+    <!-- Product view slider -->
+    <script type="text/javascript" src="/js/jquery.simpleGallery.js"></script>
+    <script type="text/javascript" src="/js/jquery.simpleLens.js"></script>
+    <!-- slick slider -->
+    <script type="text/javascript" src="/js/slick.js"></script>
+    <!-- Price picker slider -->
+    <script type="text/javascript" src="/js/nouislider.js"></script>
+    <!-- Custom js -->
+    <script src="/js/custom.js"></script> 
+
+  </body>
+</html>

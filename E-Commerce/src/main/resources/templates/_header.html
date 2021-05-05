@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Shop</title>
+
+<!-- Font awesome -->
+<link href="/css/font-awesome.css" rel="stylesheet">
+<!-- Bootstrap -->
+<link href="/css/bootstrap.css" rel="stylesheet">
+<!-- SmartMenus jQuery Bootstrap Addon CSS -->
+<link href="/css/jquery.smartmenus.bootstrap.css" rel="stylesheet">
+<!-- Product view slider -->
+<link rel="stylesheet" type="text/css" href="/css/jquery.simpleLens.css">
+<!-- slick slider -->
+<link rel="stylesheet" type="text/css" href="/css/slick.css">
+<!-- price picker slider -->
+<link rel="stylesheet" type="text/css" href="/css/nouislider.css">
+<!-- Theme color -->
+<link id="switcher" href="/css/theme-color/default-theme.css"
+	rel="stylesheet">
+<!-- <link id="switcher" href="/css/theme-color/bridge-theme.css" rel="stylesheet"> -->
+<!-- Top Slider CSS -->
+<link href="/css/sequence-theme.modern-slide-in.css" rel="stylesheet"
+	media="all">
+
+<!-- Main style sheet -->
+<link href="/css/style.css" rel="stylesheet">
+
+<!-- Google Font -->
+<link href='https://fonts.googleapis.com/css?family=Lato'
+	rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Raleway'
+	rel='stylesheet' type='text/css'>
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<body>
+	<div th:fragment="header">
+		<!-- Start header section -->
+		<header id="aa-header">
+			<!-- start header top  -->
+			<div class="aa-header-top">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="aa-header-top-area">
+								<!-- start header top left -->
+								<div class="aa-header-top-left">
+									<!-- start language -->
+									<div class="aa-language">
+										<div class="dropdown">
+											<div class="btn dropdown-toggle"><img
+												src="/img/flag/english.jpg" alt="english flag">ENGLISH
+											</div>
+										</div>
+									</div>
+									<!-- / language -->
+
+									<!-- start currency -->
+									<div class="aa-currency">
+										<div class="dropdown">
+											<span class="btn dropdown-toggle"><i class="fa fa-usd"></i>USD</span>
+										</div>
+									</div>
+									<!-- / currency -->
+									<!-- start cellphone -->
+									<div class="cellphone">
+										<p>
+											<span class="fa fa-phone"></span>+84-123-456-789
+										</p>
+									</div>
+									<!-- / cellphone -->
+								</div>
+								<!-- / header top left -->
+								<div class="aa-header-top-right">
+									<ul class="aa-head-top-nav-right">
+										<li><a sec:authorize="isAnonymous()">Guest</a></li>
+										<li><a sec:authorize="isAuthenticated()"
+											th:href="@{/myprofile}"
+											th:text="${#authentication.getPrincipal().getUsername()}"></a></li>
+										<li sec:authorize="isAuthenticated()"><a
+											href="/shoppingCart/cart">My Cart</a></li>
+										<li><a th:href="@{/login}" sec:authorize="isAnonymous()">Login</a></li>
+										<li><a sec:authorize="isAuthenticated()"
+											th:href="@{/logout}">Logout</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- / header top  -->
+
+			<!-- start header bottom  -->
+			<div class="aa-header-bottom">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="aa-header-bottom-area">
+								<!-- logo  -->
+								<div class="aa-logo">
+									<!-- Text based logo -->
+									<a href="/">
+                  <span class="fa fa-shopping-cart"></span>
+                  <p>VN2018<strong>Tokyo</strong> <span>Your Shopping Partner</span></p>
+                </a>
+									<!-- img based logo -->
+									<!-- <a href="index.html"><img src="/img/logo.jpg" alt="logo img"></a> -->
+								</div>
+								<!-- / logo  -->
+								<!-- cart box -->
+								<div sec:authorize="isAuthenticated()" class="aa-cartbox">
+									<a class="aa-cart-link" href="/shoppingCart/cart"> <span
+										class="fa fa-shopping-basket"></span> <span
+										class="aa-cart-title">SHOPPING CART</span> <span
+										th:unless="${isCartHeaderEmpty}" class="aa-cart-notify"
+										th:text="${cartHeaderNumber}"></span>
+									</a>
+									<div class="aa-cartbox-summary">
+										<div class="alert alert-warning" th:if="${isCartHeaderEmpty}">Oops,
+											your cart is empty. See if you can find what you like and add
+											them to cart.</div>
+										<ul>
+											<li th:each="cartItem : ${cartHeaderItems}"><a
+												class="aa-cartbox-img"
+												th:href="@{/productdetail/id={id}(id=${cartItem.product.product_id})}">
+													<img width="125px" height="150px"
+													th:src="@{'/upload/' + ${cartItem.product.product_id}} + '.jpg'"
+													onerror="this.src='/img/man/t-shirt-1.png';">
+											</a>
+												<div class="aa-cartbox-info">
+													<h4>
+														<a
+															th:href="@{/productdetail/id={id}(id=${cartItem.product.product_id})}"><span
+															th:text="${cartItem.product.product_name}"></span></a>
+													</h4>
+													<p>
+														<span th:text="${cartItem.quantity}"></span><span>
+															X $</span><span th:text="${cartItem.product.price}"></span>
+													</p>
+												</div> <a class="aa-remove-product"
+												th:href="@{/shoppingCart/delete(id=${cartItem.cartitem_id})}"><span
+													class="fa fa-times"></span></a></li>
+											<li><span class="aa-cartbox-total-title">Total</span> <span
+												class="aa-cartbox-total-price"
+												th:text="${'$'+cartHeaderTotal}"></span></li>
+										</ul>
+										<a th:unless="${isCartHeaderEmpty}"
+											class="aa-cartbox-checkout aa-primary-btn" href="/checkout">Checkout</a>
+									</div>
+								</div>
+								<!-- / cart box -->
+								<!-- search box -->
+								<div class="aa-search-box">
+									<form th:action="@{/searchProduct}" method="post">
+										<input type="text" name="keyword" id="keyword"
+											placeholder="Search here ex. 'Apple' ">
+										<button type="submit">
+											<span class="fa fa-search"></span>
+										</button>
+									</form>
+								</div>
+								<!-- / search box -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- / header bottom  -->
+		</header>
+		<!-- / header section -->
+		<!-- menu -->
+		<section id="menu">
+			<div class="container">
+				<div class="menu-area">
+					<!-- Navbar -->
+					<div class="navbar navbar-default" role="navigation">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle"
+								data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span> <span
+									class="icon-bar"></span> <span class="icon-bar"></span> <span
+									class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="navbar-collapse collapse">
+							<!-- Left nav -->
+							<ul class="nav navbar-nav">
+								<li><a th:href="@{/}">Home</a></li>
+								<li><a th:href="@{/searchByCategory/Phone(page='0')}"
+									th:classappend="${activePhone}? 'active'">Moblie Phones <span
+										class="caret"></span>
+								</a>
+									<ul class="dropdown-menu">
+										<li><a th:href="@{/searchByGroup/BAS(page='0')}">Basic
+												Mobiles</a></li>
+										<li><a th:href="@{/searchByGroup/SMA(page='0')}">Smartphones</a></li>
+									</ul></li>
+								<li><a th:href="@{/searchByCategory/Computer(page='0')}"
+									th:classappend="${activeComputer}? 'active'">Computes <span
+										class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a th:href="@{/searchByGroup/LAP(page='0')}">Laptops</a></li>
+										<li><a th:href="@{/searchByGroup/DES(page='0')}">Desktops</a></li>
+									</ul></li>
+								<li><a th:href="@{/searchByCategory/Accessories(page='0')}"
+									th:classappend="${activeAccessories}? 'active'">Accessories
+										<span class="caret"></span>
+								</a>
+									<ul class="dropdown-menu">
+										<li><a th:href="@{/searchByGroup/MON(page='0')}">Monitors</a></li>
+										<li><a th:href="@{/searchByGroup/HEA(page='0')}">Headphones</a></li>
+										<li><a th:href="@{/searchByGroup/MOU(page='0')}">Mouses</a></li>
+										<li><a th:href="@{/searchByGroup/KEY(page='0')}">Keyboards</a></li>
+										<li><a th:href="@{/searchByGroup/MIC(page='0')}">Microphones</a></li>
+										<li><a th:href="@{/searchByGroup/SPE(page='0')}">Speakers</a></li>
+									</ul></li>
+								<li><a th:href="@{/searchByCategory/Other(page='0')}"
+									th:classappend="${activeOther}? 'active'">Others <span
+										class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a th:href="@{/searchByGroup/CAM(page='0')}">Cameras</a></li>
+										<li><a th:href="@{/searchByGroup/CON(page='0')}">Consoles</a></li>
+										<li><a th:href="@{/searchByGroup/TAB(page='0')}">Tablets</a></li>
+									</ul></li>
+								<li><a href="/product">All product</a>
+								<li><a href="/orderhistory">Order</a>
+								<li><a href="/contact">Contact</a></li>
+							</ul>
+						</div>
+						<!--/.nav-collapse -->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- / menu -->
+	</div>
+
+	<!-- jQuery library -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="/js/bootstrap.js"></script>
+	<!-- SmartMenus jQuery plugin -->
+	<script type="text/javascript" src="/js/jquery.smartmenus.js"></script>
+	<!-- SmartMenus jQuery Bootstrap Addon -->
+	<script type="text/javascript" src="/js/jquery.smartmenus.bootstrap.js"></script>
+	<!-- To Slider JS -->
+	<script src="/js/sequence.js"></script>
+	<script src="/js/sequence-theme.modern-slide-in.js"></script>
+	<!-- Product view slider -->
+	<script type="text/javascript" src="/js/jquery.simpleGallery.js"></script>
+	<script type="text/javascript" src="/js/jquery.simpleLens.js"></script>
+	<!-- slick slider -->
+	<script type="text/javascript" src="/js/slick.js"></script>
+	<!-- Price picker slider -->
+	<script type="text/javascript" src="/js/nouislider.js"></script>
+	<!-- Custom js -->
+	<script src="/js/custom.js"></script>
+
+
+</body>
+</html>
